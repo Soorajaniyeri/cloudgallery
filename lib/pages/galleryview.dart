@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_gallery/pages/galleryitem.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GalleryViewPage extends StatefulWidget {
   const GalleryViewPage({super.key});
@@ -30,6 +32,29 @@ class _GalleryViewPageState extends State<GalleryViewPage> {
         .delete();
   }
 
+  // cacheImage(String url) {
+  //
+  //   return
+  //   // Container(
+  //   //   decoration: BoxDecoration(
+  //   //       borderRadius:
+  //   //       const BorderRadius.all(Radius.circular(10)),
+  //   //       // color: Colors.yellow,
+  //   //       image:
+  //   //
+  //   //
+  //   //       DecorationImage(
+  //   //           image:
+  //   //
+  //   //           // NetworkImage(
+  //   //           //     snapshot.data!.docs[index]["image"])
+  //   //
+  //   //
+  //   //       )),
+  //   //   margin: const EdgeInsets.all(10),
+  //   // );
+  // }
+
   uploadImage() async {
     XFile? store = await picker.pickImage(source: ImageSource.gallery);
     if (store != null) {
@@ -40,7 +65,6 @@ class _GalleryViewPageState extends State<GalleryViewPage> {
         UploadTask task = ref.putFile(selectedImg!);
         task.whenComplete(() async {
           var downloadUrl = await ref.getDownloadURL();
-
 
           load
               .collection("users")
@@ -93,19 +117,33 @@ class _GalleryViewPageState extends State<GalleryViewPage> {
               if (snapshot.hasData) {
                 return GridView.builder(
                     itemCount: snapshot.data!.docs.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4),
                     itemBuilder: (context, index) {
                       return Stack(children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
-                              // color: Colors.yellow,
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      snapshot.data!.docs[index]["image"]))),
-                          margin: const EdgeInsets.all(10),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return GalleryItemView(uid: index);
+                            }));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(1)),
+                                // color: Colors.yellow,
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image:
+
+                                        // precacheImage(NetworkImage(snapshot.data.docs[index]['image']), context);
+
+                                        CachedNetworkImageProvider(snapshot
+                                            .data!.docs[index]["image"]))),
+                            margin: const EdgeInsets.all(1),
+                          ),
                         ),
                         Positioned(
                           right: 10,

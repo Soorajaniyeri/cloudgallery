@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_gallery/designs/buttondesign.dart';
 import 'package:cloud_gallery/pages/loginpage.dart';
@@ -73,8 +74,8 @@ class _ProfileState extends State<Profile> {
                         height: 20,
                       ),
                       CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(snapshot.data!.docs[0]['dp']),
+                        backgroundImage: CachedNetworkImageProvider(
+                            snapshot.data!.docs[0]['dp']),
                         radius: 60,
                       ),
                       const SizedBox(
@@ -131,6 +132,10 @@ class _ProfileState extends State<Profile> {
               } else {
                 return const SizedBox();
               }
-            }));
+            })
+
+
+
+    );
   }
 }
